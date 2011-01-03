@@ -2,26 +2,29 @@ require 'ruby2ruby'
 require 'ruby_parser'
 require 'sexp_processor'
 
-class Method
-  attr_accessor :args
+module MethodMixin
+  attr_reader :args
+
+  def args=(a)
+    @args = a.clone
+    @args.owning_method = self
+    @args
+  end
 end
 
-class UnboundMethod
-  attr_accessor :args
-end
+Method.send(:include, MethodMixin)
+UnboundMethod.send(:include, MethodMixin)
 
 module MethodArgs
 
   class ArgList < Array
     class Arg
       
+      attr_accessor :arg_list
       attr_reader :name, :type
       
-      def initialize(cls, arg)
-        @cls = cls
-        @name = arg[0]
-        @type = arg[1]
-        @default = arg[2]
+      def initialize(name, type, default = nil)
+        @name, @type, @default = name, type, default
       end
 
       def required?
@@ -36,13 +39,28 @@ module MethodArgs
         @type == :splat
       end
 
-      def default_value(inst)
+      def default_value(receiver = nil)
         return nil if @default.nil?
-        raise "You must evaluate defaults in the context of a matching class. #{inst.class.name} is not a #{@cls.name}." unless inst.is_a?(@cls)
-        inst.instance_eval(@default)
+        receiver ||= arg_list.owning_method.receiver if arg_list.owning_method.respond_to?(:receiver)
+        raise "You must specify a receiver for the defaul value" if receiver.nil?
+        raise "You must evaluate defaults in the context of a matching class. #{receiver.class.name} is not a #{@cls.name}." unless receiver.is_a?(arg_list.cls)
+        receiver.instance_eval(@default)
       end
     end
-    
+
+    attr_accessor :owning_method
+    attr_reader :cls
+
+    def initialize(cls)
+      @cls = cls
+    end
+
+    def clone
+      o = super
+      o.each {|arg| arg.arg_list = o}
+      o
+    end
+
     def required_size
       inject(0) {|count, arg| count += arg.required? ? 1 : 0}
     end
@@ -55,16 +73,7 @@ module MethodArgs
     def types
       map(&:type)
     end
-
-    def initialize(cls, method)
-      @cls, @method = cls, method
-    end
-
-    def to_method
-      @cls.instance_method(@method)
-    end
   end
-
 
   def self.load(file)
     file = File.expand_path(file)
@@ -131,15 +140,15 @@ module MethodArgs
 
     def process_args(exp)
       exp.shift
-      arg_list = ArgList.new(current_class, @current_method)
+      arg_list = ArgList.new(current_class)
       while !exp.empty?
         t = exp.shift
         case t
         when Symbol
           arg_list << if t.to_s[0] == ?*
-            ArgList::Arg.new(current_class, [t.to_s[1, t.to_s.size].to_sym, :splat])
+            ArgList::Arg.new(t.to_s[1, t.to_s.size].to_sym, :splat)
           else
-            ArgList::Arg.new(current_class, [t, :required])
+            ArgList::Arg.new(t, :required)
           end
         when Sexp
           case t.shift
@@ -147,7 +156,7 @@ module MethodArgs
             lasgn = t.shift
             lasgn.shift
             name = lasgn.shift
-            new_arg = ArgList::Arg.new(current_class, [name, :optional, @ruby2ruby.process(lasgn.last)])
+            new_arg = ArgList::Arg.new(name, :optional, @ruby2ruby.process(lasgn.last))
             arg_list.each_with_index{|arg, idx| arg_list[idx] = new_arg if arg.name == name}
           end
         end
@@ -160,6 +169,14 @@ module MethodArgs
       unless current_class.const_defined?(:ArgList)
         current_class.send(:const_set, :ArgList, @method_maps[current_classname])
         current_class.module_eval(<<-HERE_DOC, __FILE__, __LINE__)
+          alias_method :__method__, :method
+          
+          def method(name)
+            m = __method__(name)
+            m.args = self.class.instance_arg_list(name)
+            m
+          end
+
           class << self
             alias_method :__instance_method__, :instance_method unless method_defined?(:__instance_method__)
           end
@@ -175,6 +192,10 @@ module MethodArgs
               ArgList[method_name]
             elsif method.owner.respond_to?(:instance_arg_list)
               method.owner.instance_arg_list(method_name)
+            # elsif method.respond_to?(:source_location)
+            #   source, line = method.source_location
+            #   MethodArgs.load(source)
+            #   method.owner.instance_arg_list(method_name)
             else
               raise \"\#{method.owner} has not been loaded with method_args\"
             end

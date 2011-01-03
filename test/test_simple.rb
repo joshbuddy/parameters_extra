@@ -24,10 +24,6 @@ class TestSimple < MiniTest::Unit::TestCase
     assert_equal [:required, :optional],          One.instance_method(:default_args_with_dependant_value).args.types
   end
 
-  def test_arg_method
-    assert_equal One.instance_method(:no_args), One.instance_arg_list(:no_args).to_method
-  end
-
   def test_default_args
     one = One.new
     one.two_method = 'happy times'
