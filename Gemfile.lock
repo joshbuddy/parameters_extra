@@ -1,0 +1,35 @@
+PATH
+  remote: .
+  specs:
+    method_args (0.0.1)
+      ruby2ruby (~> 1.2.4)
+      ruby_parser (~> 2.0)
+      sexp_processor (~> 3.0.4)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    callsite (0.0.4)
+    minitest (2.0.2)
+    phocus (1.1)
+    rake (0.8.7)
+    ruby2ruby (1.2.5)
+      ruby_parser (~> 2.0)
+      sexp_processor (~> 3.0)
+    ruby_parser (2.0.5)
+      sexp_processor (~> 3.0)
+    sexp_processor (3.0.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 1.0.0)
+  callsite (~> 0.0.4)
+  method_args!
+  minitest
+  phocus
+  rake
+  ruby2ruby (~> 1.2.4)
+  ruby_parser (~> 2.0)
+  sexp_processor (~> 3.0.4)
