@@ -3,16 +3,17 @@ class TestSimple < MiniTest::Unit::TestCase
     MethodArgs.load(~'fixtures/1')
   end
 
+  focus
   def test_arg_counts
-    assert_equal 0, One.arg_list(:no_args).count
-    assert_equal 1, One.arg_list(:one_args).count
-    assert_equal 2, One.arg_list(:two_args).count
-    assert_equal 3, One.arg_list(:splat_args).count
-    assert_equal 2, One.arg_list(:splat_args).required_count
-    assert_equal 2, One.arg_list(:default_args).count
-    assert_equal 1, One.arg_list(:default_args).required_count
-    assert_equal 2, One.arg_list(:default_args_with_dependant_value).count
-    assert_equal 1, One.arg_list(:default_args_with_dependant_value).required_count
+    assert_equal 0, One.instance_method(:no_args).args.count
+    assert_equal 1, One.instance_method(:one_args).args.count
+    assert_equal 2, One.instance_method(:two_args).args.count
+    assert_equal 3, One.instance_method(:splat_args).args.count
+    assert_equal 2, One.instance_method(:splat_args).args.required_count
+    assert_equal 2, One.instance_method(:default_args).args.count
+    assert_equal 1, One.instance_method(:default_args).args.required_count
+    assert_equal 2, One.instance_method(:default_args_with_dependant_value).args.count
+    assert_equal 1, One.instance_method(:default_args_with_dependant_value).args.required_count
   end
 
   def test_arg_types

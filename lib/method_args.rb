@@ -2,6 +2,10 @@ require 'ruby2ruby'
 require 'ruby_parser'
 require 'sexp_processor'
 
+class Method
+  attr_accessor :args
+end
+
 module MethodArgs
 
   class ArgList < Array
@@ -152,8 +156,17 @@ module MethodArgs
       unless current_class.const_defined?(:ArgList)
         current_class.send(:const_set, :ArgList, @method_maps[current_classname])
         current_class.module_eval "
-          def self.arg_list(method_name)
-            owner = instance_method(method_name).owner
+          alias_method :old_method, :method
+          alias_method :old_instance_method, :instance_method
+
+          def self.instance_method(name)
+            m = old_instance_method
+            m.args = instance_arg_list(name)
+            m
+          end
+
+          def self.instance_arg_list(method_name)
+            method = instance_method(method_name)
             if owner == self
               ArgList[method_name]
             elsif owner.respond_to?(:arg_list)
