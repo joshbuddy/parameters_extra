@@ -145,10 +145,10 @@ module MethodArgs
         t = exp.shift
         case t
         when Symbol
-          arg_list << if t.to_s[0] == ?*
-            ArgList::Arg.new(t.to_s[1, t.to_s.size].to_sym, :splat)
-          else
-            ArgList::Arg.new(t, :required)
+          arg_list << case t.to_s[0]
+          when ?* then ArgList::Arg.new(t.to_s[1, t.to_s.size].to_sym, :splat)
+          when ?& then ArgList::Arg.new(t.to_s[1, t.to_s.size].to_sym, :block)
+          else         ArgList::Arg.new(t, :required)
           end
         when Sexp
           case t.shift
