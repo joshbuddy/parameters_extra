@@ -153,7 +153,14 @@ module MethodArgs
         current_class.send(:const_set, :ArgList, @method_maps[current_classname])
         current_class.module_eval "
           def self.arg_list(method_name)
-            ArgList[method_name]
+            owner = instance_method(method_name).owner
+            if owner == self
+              ArgList[method_name]
+            elsif owner.respond_to?(:arg_list)
+              owner.arg_list(method_name)
+            else
+              raise \"\#{owner} has not been loaded with method_args\"
+            end
           end
         "
       end

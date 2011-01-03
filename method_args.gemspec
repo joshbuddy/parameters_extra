@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.summary     = "Get back more detailed information about the arguments for a method"
   s.description = "Get back more detailed information about the arguments for a method"
 
-  s.rubyforge_project = "method_args2"
+  s.rubyforge_project = "method_args"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

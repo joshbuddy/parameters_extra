@@ -1,4 +1,4 @@
-class TestMethodArgs < MiniTest::Unit::TestCase
+class TestSimple < MiniTest::Unit::TestCase
   def setup
     MethodArgs.load(~'fixtures/1')
   end
