@@ -6,6 +6,10 @@ class Method
   attr_accessor :args
 end
 
+class UnboundMethod
+  attr_accessor :args
+end
+
 module MethodArgs
 
   class ArgList < Array
@@ -155,27 +159,28 @@ module MethodArgs
     def add_methods
       unless current_class.const_defined?(:ArgList)
         current_class.send(:const_set, :ArgList, @method_maps[current_classname])
-        current_class.module_eval "
-          alias_method :old_method, :method
-          alias_method :old_instance_method, :instance_method
-
+        current_class.module_eval(<<-HERE_DOC, __FILE__, __LINE__)
+          class << self
+            alias_method :__instance_method__, :instance_method unless method_defined?(:__instance_method__)
+          end
           def self.instance_method(name)
-            m = old_instance_method
+            m = __instance_method__(name)
             m.args = instance_arg_list(name)
             m
           end
 
           def self.instance_arg_list(method_name)
-            method = instance_method(method_name)
-            if owner == self
+            method = __instance_method__(method_name)
+            if method.owner == self
               ArgList[method_name]
-            elsif owner.respond_to?(:arg_list)
-              owner.arg_list(method_name)
+            elsif method.owner.respond_to?(:instance_arg_list)
+              method.owner.instance_arg_list(method_name)
             else
-              raise \"\#{owner} has not been loaded with method_args\"
+              raise \"\#{method.owner} has not been loaded with method_args\"
             end
           end
-        "
+
+        HERE_DOC
       end
     end
 
