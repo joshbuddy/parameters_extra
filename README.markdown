@@ -36,5 +36,5 @@ If you want to get the value of a default argument, you'll need a context in whi
 an instance of the class from which the method derives.
 
     obj = MyClass.new
-    MyClass.instance_method(:something).args.last.default_value(obj)
+    obj.method(:something).args.last.default_value
     # => 'hello'
