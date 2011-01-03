@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "method_args/version"
 
 Gem::Specification.new do |s|
-  s.name        = "method_args"
+  s.name        = "method-args"
   s.version     = MethodArgs::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Joshua Hull"]
