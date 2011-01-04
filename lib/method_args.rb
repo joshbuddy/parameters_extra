@@ -166,7 +166,7 @@ module MethodArgs
     end
 
     def add_methods
-      unless current_class.const_defined?(:ArgList)
+      unless current_class.method(:const_defined?).arity == 2 ? current_class.const_defined?(:ArgList, false) : current_class.const_defined?(:ArgList)
         current_class.send(:const_set, :ArgList, @method_maps[current_classname])
         current_class.module_eval(<<-HERE_DOC, __FILE__, __LINE__)
           alias_method :__method__, :method
@@ -189,7 +189,7 @@ module MethodArgs
           def self.instance_arg_list(method_name)
             method = __instance_method__(method_name)
             if method.owner == self
-              ArgList[method_name]
+              ArgList[method_name] or raise('i don\\'t know this method ' + method_name.inspect)
             elsif method.owner.respond_to?(:instance_arg_list)
               method.owner.instance_arg_list(method_name)
             # elsif method.respond_to?(:source_location)

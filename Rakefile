@@ -3,6 +3,7 @@ require 'bundler'
 
 desc "Run tests"
 task :test do
+  $: << '.'
   $: << 'lib'
   require 'method_args'
   require 'test/helper'

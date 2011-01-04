@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    method_args (0.0.1)
+    method-args (0.0.3)
       ruby2ruby (~> 1.2.4)
       ruby_parser (~> 2.0)
       sexp_processor (~> 3.0.4)
@@ -26,7 +26,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.0.0)
   callsite (~> 0.0.4)
-  method_args!
+  method-args!
   minitest
   phocus
   rake
