@@ -12,4 +12,11 @@ class TestBoundMethod < MiniTest::Unit::TestCase
     assert_equal 'more happy times', two.method(:default_args_with_dependant_value).args.last.default_value
   end
 
+  def test_binding_method
+    method = One.instance_method(:default_args_with_dependant_value)
+    one = One.new
+    one.two_method = 'happy times'
+    assert_equal 'happy times',      method.bind(one).args.last.default_value
+  end
+
 end

@@ -3,7 +3,13 @@ require 'ruby_parser'
 require 'sexp_processor'
 
 module MethodMixin
-  attr_reader :args
+  def args(trying_load = false)
+    if !trying_load && respond_to?(:source_location) && !owner.const_defined?(:ArgList, false)
+      file, line = source_location
+      MethodArgs.load(file, false)
+    end
+    self.args = owner.const_get(:ArgList)[name.to_sym]
+  end
 
   def args=(a)
     @args = a.clone
@@ -75,9 +81,9 @@ module MethodArgs
     end
   end
 
-  def self.load(file)
+  def self.load(file, require_file = true)
     file = File.expand_path(file)
-    require file
+    require file if require_file
     parser = RubyParser.new
     sexp = parser.process(File.read(File.exist?(file) ? file : "#{file}.rb"))
     method_args = Processor.new
@@ -166,24 +172,13 @@ module MethodArgs
     end
 
     def add_methods
-      unless current_class.method(:const_defined?).arity == 2 ? current_class.const_defined?(:ArgList, false) : current_class.const_defined?(:ArgList)
+      unless current_class.method(:const_defined?).arity == -1 ? current_class.const_defined?(:ArgList, false) : current_class.const_defined?(:ArgList)
         current_class.send(:const_set, :ArgList, @method_maps[current_classname])
         current_class.module_eval(<<-HERE_DOC, __FILE__, __LINE__)
           alias_method :__method__, :method
           
-          def method(name)
-            m = __method__(name)
-            m.args = self.class.instance_arg_list(name)
-            m
-          end
-
           class << self
             alias_method :__instance_method__, :instance_method unless method_defined?(:__instance_method__)
-          end
-          def self.instance_method(name)
-            m = __instance_method__(name)
-            m.args = instance_arg_list(name)
-            m
           end
 
           def self.instance_arg_list(method_name)
@@ -192,10 +187,6 @@ module MethodArgs
               ArgList[method_name] or raise('i don\\'t know this method ' + method_name.inspect)
             elsif method.owner.respond_to?(:instance_arg_list)
               method.owner.instance_arg_list(method_name)
-            # elsif method.respond_to?(:source_location)
-            #   source, line = method.source_location
-            #   MethodArgs.load(source)
-            #   method.owner.instance_arg_list(method_name)
             else
               raise \"\#{method.owner} has not been loaded with method_args\"
             end

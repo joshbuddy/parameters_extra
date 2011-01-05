@@ -19,7 +19,12 @@ Pretend you have a file `your_ruby_file.rb`:
       end
     end
 
-To look at the arguments to something, do the following.
+To look at the arguments to something and you're in Ruby 1.9 (please see https://twitter.com/igrigorik/status/19461463110320128), just require it normally:
+
+    require 'your_ruby_file'
+    MyClass.instance_method(:something).args
+
+Otherwise, do the following:
     
     MethodArgs.load('your_ruby_file') # <-- this also requires the file
     MyClass.instance_method(:something).args
