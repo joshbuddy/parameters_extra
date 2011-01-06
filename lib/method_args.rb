@@ -45,6 +45,10 @@ module MethodArgs
         @type == :splat
       end
 
+      def default?
+        !@default.nil?
+      end
+
       def default_value(receiver = nil)
         return nil if @default.nil?
         receiver ||= arg_list.owning_method.receiver if arg_list.owning_method.respond_to?(:receiver)
