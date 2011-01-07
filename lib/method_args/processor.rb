@@ -77,6 +77,7 @@ module MethodArgs
         end
       end
       @methods[current_classname] << [@current_method, arg_list]
+      exp
     end
 
     def current_classname
