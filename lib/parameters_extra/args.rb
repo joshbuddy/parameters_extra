@@ -1,4 +1,4 @@
-module MethodArgs
+module ParametersExtra
   class Args < Array
     class Arg
     
@@ -25,9 +25,9 @@ module MethodArgs
         !@default.nil?
       end
 
-      def default_value(receiver = nil)
+      def default_value(*args)
         return nil if @default.nil?
-        receiver ||= arg_list.owning_method.receiver if arg_list.owning_method.respond_to?(:receiver)
+        receiver ||= arg_list.owning_method.receiver
         raise "You must specify a receiver for the defaul value" if receiver.nil?
         raise "You must evaluate defaults in the context of a matching class. #{receiver.class.name} is not a #{arg_list.cls.name}." unless receiver.is_a?(arg_list.cls)
         receiver.instance_eval(@default)

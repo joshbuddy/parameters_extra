@@ -1,4 +1,4 @@
-module MethodArgs
+module ParametersExtra
   class MethodRegistry < Hash
     attr_reader :method_names
 

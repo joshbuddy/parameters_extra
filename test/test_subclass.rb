@@ -1,17 +1,21 @@
 class TestSubclass < MiniTest::Unit::TestCase
   def setup
-    MethodArgs.load(~'fixtures/2')
+    ParametersExtra.load(~'fixtures/2')
   end
 
   def test_normal_visibility
-    assert_equal [:one, :more], TwoSubclass.instance_method(:two).args.names
+    assert_equal [:one, :more], TwoSubclass.instance_method(:two).parameters_extra.names
+  end
+
+  def test_subclass_overridding
+    assert_equal [:hi, :there, :more], TwoSubclass.instance_method(:one).parameters_extra.names
   end
 
   def test_superclass_visibility
-    assert_equal [:hi, :there], TwoSubclass.instance_method(:one).args.names
+    assert_equal [:hi, :there], Two.instance_method(:one).parameters_extra.names
   end
 
   def test_module_visibility
-    assert_equal [:from, :mod], TwoSubclass.instance_method(:mod).args.names
+    assert_equal [:from, :mod], TwoSubclass.instance_method(:mod).parameters_extra.names
   end
 end

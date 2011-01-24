@@ -5,7 +5,7 @@ desc "Run tests"
 task :test do
   $: << '.'
   $: << 'lib'
-  require 'method_args'
+  require 'parameters_extra'
   require 'test/helper'
   Dir['test/**/test_*.rb'].each { |test| require test }
 end

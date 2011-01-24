@@ -1,4 +1,4 @@
-module MethodArgs
+module ParametersExtra
   class Processor < SexpProcessor
 
     attr_reader :methods
@@ -68,11 +68,12 @@ module MethodArgs
         when Sexp
           case t.shift
           when :block
-            lasgn = t.shift
-            lasgn.shift
-            name = lasgn.shift
-            new_arg = Args::Arg.new(name, :optional, @ruby2ruby.process(lasgn.last))
-            arg_list.each_with_index{|arg, idx| arg_list[idx] = new_arg if arg.name == name}
+            while lasgn = t.shift
+              lasgn.shift
+              name = lasgn.shift
+              new_arg = Args::Arg.new(name, :optional, @ruby2ruby.process(lasgn.last))
+              arg_list.each_with_index{|arg, idx| arg_list[idx] = new_arg if arg.name == name}
+            end
           end
         end
       end

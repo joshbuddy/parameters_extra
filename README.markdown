@@ -1,9 +1,9 @@
-# MethodArgs
+# ParametersExtra
 
 ## Purpose
 
 You've got a method, but want to know more about the arguments? `#arity` and `#parameters` (if available) are useful,
-but not nearly enough. You need something better. Like, the default arguments. *MethodArgs* makes this simple. It operates
+but not nearly enough. You need something better. Like, the default arguments. *ParametersExtra* makes this simple. It operates
 on a source file to supply the more details argument information by parsing the code itself.
 
 ## Usage
@@ -26,7 +26,7 @@ To look at the arguments to something and you're in Ruby 1.9 (please see https:/
 
 Otherwise, do the following:
     
-    MethodArgs.load('your_ruby_file') # <-- this also requires the file
+    ParametersExtra.load('your_ruby_file') # <-- this also requires the file
     MyClass.instance_method(:something).args
     
 This will return an `ArgList` object. You can then look at the names & types.

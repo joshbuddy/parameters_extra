@@ -1,9 +1,9 @@
 class TestBlock < MiniTest::Unit::TestCase
   def setup
-    MethodArgs.load(~'fixtures/3')
+    ParametersExtra.load(~'fixtures/3')
   end
 
   def test_block
-    assert_equal [:required, :optional, :splat, :block], MyClass.instance_method(:block).args.types
+    assert_equal [:required, :optional, :splat, :block], MyClass.instance_method(:block).parameters_extra.types
   end
 end

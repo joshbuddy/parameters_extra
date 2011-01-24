@@ -12,4 +12,7 @@ class TwoSubclass < Two
   include TwoModule
   def two(one, more)
   end
+
+  def one(hi, there, more)
+  end
 end

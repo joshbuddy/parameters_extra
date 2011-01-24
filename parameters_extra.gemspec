@@ -1,18 +1,18 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "method_args/version"
+require "parameters_extra/version"
 
 Gem::Specification.new do |s|
   s.name        = "method-args"
-  s.version     = MethodArgs::VERSION
+  s.version     = ParametersExtra::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Joshua Hull"]
   s.email       = ["joshbuddy@gmail.com"]
-  s.homepage    = "https://github.com/joshbuddy/method_args"
-  s.summary     = "Get back more detailed information about the arguments for a method"
-  s.description = "Get back more detailed information about the arguments for a method"
+  s.homepage    = "https://github.com/joshbuddy/parameters_extra"
+  s.summary     = "Get back more detailed information about the parameters for a method"
+  s.description = "Get back more detailed information about the parameters for a method."
 
-  s.rubyforge_project = "method_args"
+  s.rubyforge_project = "parameters_extra"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

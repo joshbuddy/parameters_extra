@@ -3,13 +3,13 @@ require 'ruby2ruby'
 require 'ruby_parser'
 require 'sexp_processor'
 
-require 'method_args/method_mixins'
-require 'method_args/args'
-require 'method_args/processor'
-require 'method_args/version'
-require 'method_args/method_registry'
-module MethodArgs
+require 'parameters_extra/method_mixins'
+require 'parameters_extra/args'
+require 'parameters_extra/processor'
+require 'parameters_extra/version'
+require 'parameters_extra/method_registry'
 
+module ParametersExtra
   ClassMethodRegistry = Hash.new{|h, k| h[k] = MethodRegistry.new}
   FileRegistry = Set.new
 
@@ -18,7 +18,7 @@ module MethodArgs
     register file
   end
 
-  def self.args_for_method(method)
+  def self.parameters_for_method(method)
     k = class_key(method.owner)
     ClassMethodRegistry[k][method.name.to_sym] if ClassMethodRegistry.key?(k)
   end
@@ -34,9 +34,9 @@ module MethodArgs
   def self.parse(file, require_file = true)
     parser = RubyParser.new
     sexp = parser.process(File.read(expand_path(file)))
-    method_args = Processor.new
-    method_args.process(sexp)
-    method_args.methods
+    parameters_extra = Processor.new
+    parameters_extra.process(sexp)
+    parameters_extra.methods
   end
 
   def self.class_key(cls)
