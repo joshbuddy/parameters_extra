@@ -22,24 +22,24 @@ Pretend you have a file `your_ruby_file.rb`:
 To look at the arguments to something and you're in Ruby 1.9 (please see https://twitter.com/igrigorik/status/19461463110320128), just require it normally:
 
     require 'your_ruby_file'
-    MyClass.instance_method(:something).args
+    MyClass.instance_method(:something).parameters_extra
 
 Otherwise, do the following:
     
     ParametersExtra.load('your_ruby_file') # <-- this also requires the file
-    MyClass.instance_method(:something).args
+    MyClass.instance_method(:something).parameters_extra
     
 This will return an `ArgList` object. You can then look at the names & types.
 
-    MyClass.instance_method(:something).args.names
+    MyClass.instance_method(:something).parameters_extra.names
     # => [:one, :two, :three, :more, :block]
 
-    MyClass.instance_method(:something).args.types
+    MyClass.instance_method(:something).parameters_extra.types
     # => [:required, :optional, :optional, :splat, :block]
     
 If you want to get the value of a default argument, you'll need a context in which to evaluate it, namely,
 an instance of the class from which the method derives.
 
     obj = MyClass.new
-    obj.method(:something).args.last.default_value
+    obj.method(:something).parameters_extra.last.default_value
     # => 'hello'
